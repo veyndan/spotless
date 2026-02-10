@@ -41,7 +41,7 @@ jobs:
         kind: [maven, gradle]
         # Test on the latest Java version once Gradle & Maven support it.
         jre: [17, 21, 24]
-        os: [ubuntu-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
         include:
           # npm on linux only (crazy slow on windows)
           - kind: npm
@@ -54,6 +54,10 @@ jobs:
           - kind: idea
             jre: 17
             os: ubuntu-latest
+          - kind: swift-format
+            jre: 17
+            os: macos-latest
+            swift-format-version: 6.2.0
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -85,6 +89,15 @@ jobs:
       - name: Test shfmt
         if: matrix.kind == 'shfmt'
         run: ./gradlew testShfmt
+      - name: Install swift-format
+        if: matrix.kind == 'swift-format'
+        run: |
+          git clone https://github.com/swiftlang/swift-format.git --branch release/${{ matrix.swift-format-version }} --depth 1
+          cd swift-format
+          swift build -c release
+      - name: Test swift-format
+        if: matrix.kind == 'swift-format'
+        run: ./gradlew testSwift-format
       - name: Test idea
         if: matrix.kind == 'idea'
         run: |

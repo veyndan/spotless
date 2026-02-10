@@ -1,0 +1,7 @@
+class Foo: Bar {
+	let a: Int? = 42
+
+	func test(something: String) async throws {
+		var b = a as! Int
+	}
+}

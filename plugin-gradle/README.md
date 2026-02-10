@@ -1239,6 +1239,8 @@ shfmt().pathToExe('/opt/homebrew/bin/shfmt')
 
 <a name="applying-freshmark-to-markdown-files"></a>
 
+## Swift
+
 ## Gherkin
 
 - `com.diffplug.gradle.spotless.GherkinExtension` [javadoc](https://javadoc.io/doc/com.diffplug.spotless/spotless-plugin-gradle/8.2.1/com/diffplug/gradle/spotless/GherkinExtension.html), [code](https://github.com/diffplug/spotless/blob/main/plugin-gradle/src/main/java/com/diffplug/gradle/spotless/GherkinExtension.java)
