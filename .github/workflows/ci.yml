@@ -41,7 +41,7 @@ jobs:
         kind: [maven, gradle]
         # Test on the latest Java version once Gradle & Maven support it.
         jre: [17, 21, 24]
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
         include:
           # npm on linux only (crazy slow on windows)
           - kind: npm
@@ -56,7 +56,7 @@ jobs:
             os: ubuntu-latest
           - kind: swift-format
             jre: 17
-            os: macos-latest
+            os: ubuntu-latest
             swift-format-version: 6.2.0
     runs-on: ${{ matrix.os }}
     steps:

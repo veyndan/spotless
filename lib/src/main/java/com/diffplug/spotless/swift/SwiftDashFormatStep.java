@@ -35,9 +35,6 @@ import com.diffplug.spotless.ProcessRunner;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-/**
- * Wraps up <a href="https://github.com/facebook/ktfmt">ktfmt</a> as a FormatterStep.
- */
 public final class SwiftDashFormatStep implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
