@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -38,6 +39,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public final class SwiftDashFormatStep implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
+	// TODO Annoyingly, swift-format --version has versions like "602.0.0", whereas swift format --version has 6.2.0.
+	//  I'm thinking of just going with using the toolchain one, as:
+	//       1. Normal versioning
+	//       2. CI will be a lot faster here
+	//       3. I need to do something like this anyway for work, as I can't ask everyone to install swift-format locally, particularly as it's hard to get a specific version via homebrew. Since we should all be using the same Xcode version, we should all have the same Swift version.
+	//       4. Seems like it's the future way to consume this library?
 	private static final String DEFAULT_VERSION = "6.2.0";
 	private static final String NAME = "swift-format";
 
@@ -62,14 +69,16 @@ public final class SwiftDashFormatStep implements Serializable {
 	}
 
 	private RoundtripState createRoundtrip() {
-		// TODO Update advice.
-		String trackingIssue = "\n  github issue to handle this better: https://github.com/diffplug/spotless/issues/674";
-		ForeignExe exeAbsPath = ForeignExe.nameAndVersion(NAME, version)
-				.pathToExe(pathToExe)
+		String howToInstall = "swift-format is a part of the toolchain of Swift 6 and above. If Spotless can't " +
+				"discover it automatically, you can point Spotless to the Swift binary with {@code pathToExe('/path/to/swift')}";
+		final ForeignExe exe = ForeignExe.nameAndVersion("swift-format", version)
+				.pathToExe(pathToExe == null ? "/usr/bin/swift format" : pathToExe)
 				.versionRegex(Pattern.compile("^(.*)\n$"))
-				.fixCantFind("Try running {@code pip install black=={version}}, or else tell Spotless where it is with {@code black().pathToExe('path/to/executable')}" + trackingIssue)
-				.fixWrongVersion("Try running {@code pip install --force-reinstall black=={version}}, or else specify {@code black('{versionFound}')} to Spotless" + trackingIssue);
-		return new RoundtripState(version, exeAbsPath);
+				.fixCantFind(howToInstall)
+				.fixWrongVersion(
+						"You can tell Spotless to use the version you already have with {@code swiftDashFormat('{versionFound}')}"
+								+ "or you can install the currently specified Swift version, {version}.\n" + howToInstall);
+		return new RoundtripState(version, exe);
 	}
 
 	public static String defaultVersion() {
@@ -109,7 +118,8 @@ public final class SwiftDashFormatStep implements Serializable {
 
 		String format(ProcessRunner runner, String input, File file) throws IOException, InterruptedException {
 			if (args == null) {
-				args = List.of(exe.confirmVersionAndGetAbsolutePath(), "--parallel", "--strict");
+				args = Stream.concat(Arrays.stream(exe.confirmVersionAndGetAbsolutePath().split(" ")), Stream.of("lint", "--parallel", "--strict"))
+						.collect(Collectors.toList());
 			}
 			final List<String> finalArgs = Stream.concat(args.stream(), Stream.of(file.getAbsolutePath()))
 					.collect(Collectors.toList());

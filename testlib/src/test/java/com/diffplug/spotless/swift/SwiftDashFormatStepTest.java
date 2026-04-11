@@ -19,9 +19,8 @@ import org.junit.jupiter.api.Test;
 
 import com.diffplug.spotless.ResourceHarness;
 import com.diffplug.spotless.StepHarnessWithFile;
-import com.diffplug.spotless.tag.SwiftDashFormatTest;
 
-@SwiftDashFormatTest
+//@SwiftDashFormatTest
 class SwiftDashFormatStepTest extends ResourceHarness {
 	@Test
 	void behavior() {

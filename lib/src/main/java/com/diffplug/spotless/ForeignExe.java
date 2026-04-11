@@ -103,7 +103,7 @@ public class ForeignExe implements Serializable {
 					exeAbsPath = cmdWhich.assertExitZero(Charset.defaultCharset()).trim();
 				}
 			}
-			ProcessRunner.Result cmdVersion = runner.exec(exeAbsPath, versionFlag);
+			ProcessRunner.Result cmdVersion = runner.exec(exeAbsPath.split(" ")[0], exeAbsPath.split(" ")[1], versionFlag);
 			if (cmdVersion.exitNotZero()) {
 				throw cantFind("Unable to run " + exeAbsPath, cmdVersion);
 			}
